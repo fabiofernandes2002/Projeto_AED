@@ -1,0 +1,5 @@
+junior;fernandes;admin
+Neymar;santos;user
+Luis;paiva;user
+ju;varela;user
+jun;hh
