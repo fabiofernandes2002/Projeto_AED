@@ -7,6 +7,8 @@ from PIL import ImageTk, Image
  # importa users.py, ficheiro onde estão definidas algumas funções
 from users import *
 
+ficheiro_categorias = "./ficheiros/categorias.txt"
+
 
 window = Tk()
 # window.geometry("800x500")
@@ -24,6 +26,47 @@ window.geometry("{:.0f}x{:.0f}+{:.0f}+{:.0f}" .format(appWidth, appHeight, int(x
 
 
 janela_inicial = window # guarda a designação da janela anterior
+
+#função que lê as categorias na listbox
+def ler_categorias():
+    f= open(ficheiro_categorias, "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+    for  linha in lista:
+        lstbox.insert("end", linha)
+
+def ler_filmes_series():
+    tree_filmes_series.delete(*tree_filmes_series.get_children())  # remove o conteudo da treeview
+    pos = lstbox.curselection()     # Item selecionado na Listbox
+    categoria = lstbox.get(pos)     # categoria selecionada
+    f = open("ficheiros\\filmes&series.txt", "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+
+    global cont
+    global receita_maximo
+    global tipo
+    cont=0
+    maximo =0
+    receita_maximo=""
+    for  linha in lista:
+        campos = linha.split(";")
+        if categoria == campos[3]:
+            tree_filmes_series.insert("","end", values = (campos[0], campos[1], campos[2]))
+            cont+=1
+            if int(campos[2]) > maximo:
+                maximo = int(campos[2])
+                tipo = campos[1]
+                receita_maximo = campos[0]
+    if cont ==0:
+        messagebox.showwarning("receitas", "Não existem receitas registados de momento")
+
+def ver_mais():
+    global cont
+    global receita_maximo
+    num_visualizacoes.set(str(cont))
+    tipologia.set(tipo)
+    titulo.set(receita_maximo)
 
 def iniciarSessao(userName, userPass):
    userAutenticado.set(validaConta(userName, userPass))
@@ -69,35 +112,36 @@ def pagina_user():
     y = (screenHeight/2) - (appHeight/2)
     janela_user.geometry("{:.0f}x{:.0f}+{:.0f}+{:.0f}" .format(appWidth, appHeight, int(x), int(y)))
 
+    #label categorias
     lbl_cat = Label(janela_user , text= "CATEGORIAS"  , fg= "white", bg="black",  font=('Helvetica', 25))
     lbl_cat.place(x=30,y=30)
 
-    lista_categorias= ['acao', 'comedia', 'aventura', 'romance', 'terror'  ]
+    #listbox
+    global lstbox
+    lstbox = Listbox(janela_user, width=25, height=20 , bg="white", relief="sunken")
+    lstbox.place(x=30, y= 80)
 
-    listbox_categorias = Listbox(janela_user, width=25, height=20 , bg="white", relief="sunken")
-    for categorias in lista_categorias:
-        listbox_categorias.insert(END, categorias)
-    listbox_categorias.place(x=30, y= 80)
+    ler_categorias()
 
-
-
-    btn_ver = Button(janela_user,activebackground="blue", bd=0, anchor="w" , bg="white", text="visualizar" , fg="black", font=('Helvetica', 10 ), command=pagina_inicial_admin) 
+    btn_ver = Button(janela_user,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=ler_filmes_series) 
     btn_ver.place(x=300, y=200)
 
     btn_favoritos = Button(janela_user,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos ) 
     btn_favoritos.place(x=450,y=30)
 
-    panel_filmes_series = PanedWindow(janela_user, width=300, height=250 , bg="white", relief="sunken")
-    panel_filmes_series.place(x=450, y= 110)
+    # panel_filmes_series = PanedWindow(janela_user, width=350, height=250 , bg="white", relief="sunken")
+    # panel_filmes_series.place(x=450, y= 110)
+    global tree_filmes_series
+    tree_filmes_series = ttk.Treeview(janela_user, selectmode="browse", columns=("Filmes e Séries" ,"Tipologia","Visualizações") , show="headings")
+    tree_filmes_series.place(x=450,y=110)
 
-    tree_filmes_series = ttk.Treeview(panel_filmes_series, selectmode="browse", columns=("filmes e series" ,"visualizaçoes") , show="headings")
-    tree_filmes_series.place(x=1,y=1)
+    tree_filmes_series.column("Filmes e Séries", anchor="w" , width=250)
+    tree_filmes_series.column("Tipologia", anchor="c" , width=150)
+    tree_filmes_series.column("Visualizações", anchor="c" , width=120)
 
-    tree_filmes_series.column("filmes e series", anchor="w" , width=150)
-    tree_filmes_series.column("visualizaçoes", anchor="e" , width=150)
-
-    tree_filmes_series.heading("filmes e series", text="filmes e series")
-    tree_filmes_series.heading("visualizaçoes", text="visualizaçoes")
+    tree_filmes_series.heading("Filmes e Séries", text="Filmes e Séries")
+    tree_filmes_series.heading("Tipologia", text="Tipologia")
+    tree_filmes_series.heading("Visualizações", text="Visualizações")
 
     frame_filtro =  LabelFrame(janela_user, text="filtros" ,width=380, height=150, relief="sunken",fg="white", bg="black")
     frame_filtro.place(x=30,y=500) 
@@ -130,19 +174,25 @@ def pagina_user():
     lbl_titulo = Label(panel_vermais, text="titulo:", fg="black" ,font=("Helvetica",10))
     lbl_titulo.place(x=100,y=35)
 
-    txt_titulo = Entry(panel_vermais, width=25, state="readonly", text="titulo")
+    global titulo
+    titulo = StringVar()
+    txt_titulo = Entry(panel_vermais, width=25, state="readonly", text="titulo", textvariable=titulo)
     txt_titulo.place(x=240,y=35)
 
     lbl_tipologia = Label(panel_vermais, text="tipologia:", fg="black",font=("Helvetica",10))
     lbl_tipologia.place(x=100,y=65)
     
-    txt_tipologia = Entry(panel_vermais, width=25 , state="readonly", text="tipologia")
+    global tipologia
+    tipologia = StringVar
+    txt_tipologia = Entry(panel_vermais, width=25 , state="readonly", text="tipologia", textvariable=tipologia)
     txt_tipologia.place(x=240,y=65)
     
     lbl_vizualizaçoes = Label(panel_vermais, text="Nº de vizualizaçoes:", fg="black",font=("Helvetica",10))
     lbl_vizualizaçoes.place(x=100,y=95)
 
-    txt_vizualizaçoes =Entry(panel_vermais, width=25 , state="readonly", text="Nº de vizualizaçoes")
+    global num_visualizacoes
+    num_visualizacoes = StringVar()
+    txt_vizualizaçoes =Entry(panel_vermais, width=25 , state="readonly", text="Nº de vizualizaçoes", textvariable=num_visualizacoes)
     txt_vizualizaçoes.place(x=240,y=95)
 
 

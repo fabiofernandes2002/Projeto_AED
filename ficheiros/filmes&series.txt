@@ -1,0 +1,23 @@
+O Seguranca do Shopping:Las Vegas;Filme;20;Comedia
+A Era dos Dragoes;Série;25;Accao
+Birdman;Filme;40;Accao
+A Rapariga que Roubava Livros;Filme;10;Thriller
+Segurancas de Alto Risco;Série;15;Accao
+Ted;Filme;12;Comedia
+Os Visitantes;Filme;33;Thriller
+Cinderela;Série;44;Animacao
+AI-Inteligencia Artificial;Filme;55;Thriller
+Cavalo de Guerra;Série;87;Accao
+O Resgate do Soldado Ryan;Série;98;Accao
+O Imperio do Sol;Filme;58;Accao
+Star Wars:O Despertar da Forca;Série;88;Accao
+Alien vs Predador;Filme;75;Thriller
+Como Treinares o Teu Dragao;Série;33;Animacao
+Um Principe em Nova Iorque;Série;44;Comedia
+Ma Vizinhanca;Filme;12;Comedia
+Assim Nasce uma Estrela;Filme;25;Drama
+O Infiltrado;Série;23;Drama
+Os 7 de Chicago;Filme;15;Drama
+O Gangue dos Tubarões;Série;25;Animacao
+Bora Lá;Série;25;Comedia
+Cidade alerta;Filme;57;Drama
