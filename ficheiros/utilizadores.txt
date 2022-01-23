@@ -1,7 +1,8 @@
 junior;fernandes;admin
 Neymar;santos;user
-Luis;paiva;user
+Luis;paiva;admin
 ju;varela;user
 fabio;fernandes;user
 nome;password;user
 jun;hh
+admin;admin

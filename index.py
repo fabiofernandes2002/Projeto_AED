@@ -69,8 +69,13 @@ def ver_mais():
     titulo.set(receita_maximo)
 
 def iniciarSessao(userName, userPass):
-   userAutenticado.set(validaConta(userName, userPass))
-   pagina_user()
+    userAutenticado.set(validaConta(userName, userPass))
+    admin = "luis" 
+    if userName == admin:
+       pagina_inicial_admin()
+    else:
+        pagina_user()
+    
 
 
     
