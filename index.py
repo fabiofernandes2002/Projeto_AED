@@ -484,6 +484,7 @@ def gerir_catalogo():
     listbox_categorias.place(x=170,y=130)
 
     img_canvas = Canvas(janela_gerir_catalogo, width=300, height=210 , bg="white", relief="sunken")    
+    img_canvas.pack(expand= YES, fill= BOTH)
     img_canvas.place(x=400,y=30)
 
     btn_img = Button(janela_gerir_catalogo, text="escolher uma imagem" , bg="white" , fg="black" , command=lambda: open_folder_img(janela_gerir_catalogo, img_canvas))
@@ -503,8 +504,8 @@ def open_folder_img(janela_gerir_catalogo,img_canvas):
 
     janela_gerir_catalogo.folder = filedialog.askopenfilename(initialdir=("/"), title="imagens", filetypes=(("jpg files", "*.jpg"), ("png files", "*.png")))
     img_filme = ImageTk.PhotoImage(Image.open(janela_gerir_catalogo.folder))
-    img_canvas.create_image(0,0, image = img_filme)
-    img_label = label(image = img_filme)
+    img_canvas.create_image(1,1, image = img_filme , anchor="nw" )
+    img_label = label(image = img_filme).pack()
    
 #favoritos
 def favoritos():
