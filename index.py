@@ -1,13 +1,16 @@
 from ast import Lambda
+from email import message
 from tkinter import *
 from tkinter import filedialog   # filedialog boxe
-from tkinter import ttk          # treeview
+from tkinter import ttk
+from unicodedata import category          # treeview
 from PIL import ImageTk, Image
 #from tkVideoPlayer import TkinterVideo
  # importa users.py, ficheiro onde estão definidas algumas funções
 from users import *
 
 ficheiro_categorias = "./ficheiros/categorias.txt"
+ficheiro_utilizadores = "./ficheiros/utilizadores.txt"
 
 
 window = Tk()
@@ -34,6 +37,84 @@ def ler_categorias():
     f.close()
     for  linha in lista:
         lstbox.insert("end", linha)
+        
+def gestao_categorias():
+    f= open(ficheiro_categorias, "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+    for  linha in lista:
+        listbox_gerir_categorias.insert("end", linha)
+
+def adicionar_categoria(linha):
+    linha = linha.get()
+    if linha:
+        linha += "\n"
+        f = open(ficheiro_categorias, "a", encoding="utf-8")
+        f.write(linha)
+        f.close()
+
+    janela_gestao_categorias.withdraw()
+    janela_gestao_categorias.after(0, gerir_categorias)
+
+def remover_categoria():
+    # category = listbox_gerir_categorias.get(listbox_gerir_categorias.curselection()[0])
+    # f = open(ficheiro_categorias, "r", encoding="utf-8")
+    # lista_categorias = f.readlines()
+    # f.close()
+    # line = category + "\n"
+    # nova_lista = ""
+    # for item in lista_categorias:
+    #     if item != line:
+    #         nova_lista += item
+    # f = open(ficheiro_categorias, "w", encoding="utf-8")
+    # f.write(nova_lista)
+    # f.close()
+    category = listbox_gerir_categorias.get(listbox_gerir_categorias.curselection())
+    f = open(ficheiro_categorias, "r", encoding="utf-8")
+    lista_categorias = f.readlines()
+    f.close()
+    line = category
+    nova_lista = ""
+    for item in lista_categorias:
+        if item != line:
+            nova_lista += item
+    f = open(ficheiro_categorias, "w", encoding="utf-8")
+    f.write(nova_lista)
+    f.close()
+    # item_selecionado = listbox_gerir_categorias.curselection()
+    # listbox_gerir_categorias.delete(item_selecionado[0])
+
+    # janela_gestao_categorias.withdraw()
+    # janela_gestao_categorias.after(0, gerir_categorias)
+
+def gestao_utilizadores():
+    f = open(ficheiro_utilizadores, "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+    utilizadores = []
+    for item in lista:
+        informacao = item.split(";")
+        utilizadores.append(informacao[0])
+    return utilizadores
+
+def mais_detalhes_utilizadores():
+    id_user = listbox_utilizadores.curselection()[0] + 1
+    f = open(ficheiro_utilizadores, "r", encoding="utf-8")
+    linha_users = f.readlines()[id_user]
+    f.close()
+
+    linha_utilizador = linha_users[0:len(linha_users)-1].split(";")
+
+    global utilizador
+    utilizador = {}
+    for i in range(len(linha_utilizador)):
+        if i == 0:
+            utilizador["userName"] = linha_utilizador[0]
+        if i == 1:
+            utilizador["email"] = linha_utilizador[1]
+        if i == 3:
+            utilizador["tipo_user"] = linha_utilizador[3]
+
 
 def ler_filmes_series():
     tree_filmes_series.delete(*tree_filmes_series.get_children())  # remove o conteudo da treeview
@@ -59,14 +140,27 @@ def ler_filmes_series():
                 tipo = campos[1]
                 receita_maximo = campos[0]
     if cont ==0:
-        messagebox.showwarning("receitas", "Não existem receitas registados de momento")
+        messagebox.showwarning("receitas", "Não existem Filmes&Séries registados de momento")
 
 def ver_mais():
     global cont
     global receita_maximo
-    num_visualizacoes.set(str(cont))
-    tipologia.set(tipo)
-    titulo.set(receita_maximo)
+    # num_visualizacoes.set(str(cont))
+    # tipologia.set(tipo)
+    # titulo.set(receita_maximo)
+
+def obter_conteodo():
+    try:
+        # Obter dados da linha selecionada da TreeView
+        row_id = tree_filmes_series.focus()  # obter o id da linha ativa / selecionada
+        lista = tree_filmes_series.item(row_id)
+        # dados obtidos da treeView sáo atribuidos às variáveis associadas às Entrys
+        titulo.set(lista["values"][0])
+        tipologia.set(lista["values"][1])
+        num_visualizacoes.set(lista["values"][2])
+    except:
+        messagebox.showinfo(title="ERRO", message="Seleciona o elemento a ser monstrado" )
+
 
 def iniciarSessao(userName, userPass):
     userAutenticado.set(validaConta(userName, userPass))
@@ -146,56 +240,58 @@ def pagina_user():
     tree_filmes_series.heading("Tipologia", text="Tipologia")
     tree_filmes_series.heading("Visualizações", text="Visualizações")
 
-    frame_filtro =  LabelFrame(janela_user, text="filtros" ,width=380, height=150, relief="sunken",fg="white", bg="black")
+    frame_filtro =  LabelFrame(janela_user, text="Filtros" ,width=380, height=150, relief="sunken",fg="white", bg="black")
     frame_filtro.place(x=30,y=500) 
 
-    lbl_categorias_filtro = Label(frame_filtro, text="categorias:", fg="white", bg="black",font=("Helvetica",10))
+    lbl_categorias_filtro = Label(frame_filtro, text="Categorias:", fg="white", bg="black",font=("Helvetica",10))
     lbl_categorias_filtro.place(x=25,y=25)
 
     entry_categorias_filtro = Entry(frame_filtro, width=25)
     entry_categorias_filtro.place(x=100, y=25)
    
-    lbl_titulo_filtro = Label(frame_filtro, text="titulo:", fg="white", bg="black",font=("Helvetica",10))
+    lbl_titulo_filtro = Label(frame_filtro, text="Título:", fg="white", bg="black",font=("Helvetica",10))
     lbl_titulo_filtro.place(x=25,y=55)
 
     entry_titulo_filtro = Entry(frame_filtro, width=25)
     entry_titulo_filtro.place(x=100, y=55)
 
-    btn_categorias_filtro = Button(frame_filtro, text="filtrar", fg="black", bg="white",font=("Helvetica",10))
+    btn_categorias_filtro = Button(frame_filtro, text="Filtrar", fg="black", bg="white",font=("Helvetica",10))
     btn_categorias_filtro.place(x=280,y=25)
   
-    btn_titulo_filtro = Button(frame_filtro, text="filtrar", fg="black", bg="white",font=("Helvetica",10))
+    btn_titulo_filtro = Button(frame_filtro, text="Filtrar", fg="black", bg="white",font=("Helvetica",10))
     btn_titulo_filtro.place(x=280,y=55)
 
-    panel_vermais = PanedWindow(janela_user ,width=420, height=150,  bg="white", relief="sunken")
-    panel_vermais.place(x=500, y= 500)
+    panel_vermais = PanedWindow(janela_user ,width=480, height=150,  bg="white", relief="sunken")
+    panel_vermais.place(x=450, y= 500)
 
+    btn_obter = Button(panel_vermais, text="Obter", fg="black", bg="white", font=("Helvetica", 10), command=obter_conteodo)
+    btn_obter.place(x=25, y=35)
 
     btn_vermais = Button(panel_vermais, text="Ver +", fg="black", bg="white",font=("Helvetica",10), command=ver_conteodo)
     btn_vermais.place(x=25,y=75)
 
-    lbl_titulo = Label(panel_vermais, text="titulo:", fg="black" ,font=("Helvetica",10))
+    lbl_titulo = Label(panel_vermais, text="Título:", fg="black" ,font=("Helvetica",10))
     lbl_titulo.place(x=100,y=35)
 
     global titulo
     titulo = StringVar()
-    txt_titulo = Entry(panel_vermais, width=25, state="readonly", text="titulo", textvariable=titulo)
+    txt_titulo = Entry(panel_vermais, width=34, state="readonly", text="titulo", textvariable=titulo)
     txt_titulo.place(x=240,y=35)
 
-    lbl_tipologia = Label(panel_vermais, text="tipologia:", fg="black",font=("Helvetica",10))
+    lbl_tipologia = Label(panel_vermais, text="Tipologia:", fg="black",font=("Helvetica",10))
     lbl_tipologia.place(x=100,y=65)
     
     global tipologia
-    tipologia = StringVar
-    txt_tipologia = Entry(panel_vermais, width=25 , state="readonly", text="tipologia", textvariable=tipologia)
+    tipologia = StringVar()
+    txt_tipologia = Entry(panel_vermais, width=34 , state="readonly", text="tipologia", textvariable=tipologia)
     txt_tipologia.place(x=240,y=65)
     
-    lbl_vizualizaçoes = Label(panel_vermais, text="Nº de vizualizaçoes:", fg="black",font=("Helvetica",10))
+    lbl_vizualizaçoes = Label(panel_vermais, text="Nº de Vizualizaçoes:", fg="black",font=("Helvetica",10))
     lbl_vizualizaçoes.place(x=100,y=95)
 
     global num_visualizacoes
     num_visualizacoes = StringVar()
-    txt_vizualizaçoes =Entry(panel_vermais, width=25 , state="readonly", text="Nº de vizualizaçoes", textvariable=num_visualizacoes)
+    txt_vizualizaçoes =Entry(panel_vermais, width=34 , state="readonly", text="Nº de vizualizaçoes", textvariable=num_visualizacoes)
     txt_vizualizaçoes.place(x=240,y=95)
 
 
@@ -354,14 +450,15 @@ def gerir_utilizadores():
     lbl_utilizadores = Label(janela_gerir_utilizadores, text= "utilizadors"  , fg= "white", bg="black",  font=('Helvetica', 25))
     lbl_utilizadores.place(x=30,y=30)
 
-    lista_utilizadores= ['luis', 'fabio', 'bernardo' ]
-
+    global listbox_utilizadores
+    utilizadores = gestao_utilizadores()
     listbox_utilizadores = Listbox(janela_gerir_utilizadores, width=25, height=20 , bg="white", relief="sunken")
-    for utilizador in lista_utilizadores:
-        listbox_utilizadores.insert(END, utilizador)
+    for user in utilizadores:
+        if user != "admin":
+            listbox_utilizadores.insert(END, user)
     listbox_utilizadores.place(x=30, y= 80)
 
-    btn_detalhes =Button(janela_gerir_utilizadores, text="mais detalhes", bg="white" , height=4 , width=15)
+    btn_detalhes =Button(janela_gerir_utilizadores, text="mais detalhes", bg="white" , height=4 , width=15, command=lambda:mais_detalhes_utilizadores(utilizador.get("userName")))
     btn_detalhes.place(x=250,y=150)
 
     frame_utilzadores =  LabelFrame(janela_gerir_utilizadores, text="utilzadores" ,width=350, height=250, relief="sunken",fg="white", bg="black")
@@ -370,7 +467,9 @@ def gerir_utilizadores():
     lbl_username = Label(frame_utilzadores, text="nome:", fg="black" ,font=("Helvetica",10))
     lbl_username.place(x=20,y=35)
 
-    txt_username = Entry(frame_utilzadores, width=25, state="readonly", text="titulo")
+    global utilizador
+    utilizador = StringVar()
+    txt_username = Entry(frame_utilzadores, width=25, state="readonly", text="titulo", textvariable=utilizador)
     txt_username.place(x=80,y=35)
 
     lbl_email = Label(frame_utilzadores, text="email:", fg="black",font=("Helvetica",10))
@@ -390,6 +489,7 @@ def gerir_utilizadores():
 
 #gerir categorias
 def gerir_categorias():
+    global janela_gestao_categorias
     janela_inicial.withdraw()  # fecha a janela do menu
     janela_gestao_categorias= Toplevel()
     #janela_gestao_categorias.geometry("800x500")
@@ -410,17 +510,16 @@ def gerir_categorias():
     lbl_cat = Label(janela_gestao_categorias , text= "CATEGORIAS"  , fg= "white", bg="black",  font=('Helvetica', 25))
     lbl_cat.place(x=30,y=30)
 
-    lista_categorias= ['acao', 'comedia', 'aventura', 'romance', 'terror'  ]
+    global listbox_gerir_categorias
+    listbox_gerir_categorias = Listbox(janela_gestao_categorias, width=25, height=20 , bg="white", relief="sunken")
+    listbox_gerir_categorias.place(x=30, y= 80)
 
-    listbox_categorias = Listbox(janela_gestao_categorias, width=25, height=20 , bg="white", relief="sunken")
-    for categorias in lista_categorias:
-        listbox_categorias.insert(END, categorias)
-    listbox_categorias.place(x=30, y= 80)
+    gestao_categorias()
 
     btn_adicionar = Button(janela_gestao_categorias, text="adiconar" , width=20 , height=2)
     btn_adicionar.place(x=200, y=130)
 
-    btn_remover = Button(janela_gestao_categorias , text="remover" , width=20 , height=2)
+    btn_remover = Button(janela_gestao_categorias , text="remover" , width=20 , height=2, command=remover_categoria)
     btn_remover.place(x=200, y=180)
 
     frame_categorias =  LabelFrame(janela_gestao_categorias, text="categoria" ,width=350, height=250, relief="sunken",fg="white", bg="black")
@@ -429,10 +528,10 @@ def gerir_categorias():
     lbl_cat = Label(frame_categorias, text="categoria:", )
     lbl_cat.place(x=50,y=50)
 
-    txt_cat = Entry(frame_categorias, width=25 , state="readonly", text="Nº de vizualizaçoes")
+    txt_cat = Entry(frame_categorias, width=25, text="Nº de vizualizaçoes")
     txt_cat.place(x=150, y=50)
 
-    btn_adicionar_cat = Button(frame_categorias, text="adiconar" , width=15 , height=2)
+    btn_adicionar_cat = Button(frame_categorias, text="adiconar" , width=15 , height=2, command=lambda:adicionar_categoria(txt_cat))
     btn_adicionar_cat.place(x=150, y=100)
 
 def gerir_catalogo():
