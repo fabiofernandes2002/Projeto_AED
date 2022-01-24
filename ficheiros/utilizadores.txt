@@ -1,9 +1,5 @@
-junior;fernandes;admin
-Neymar;santos;user
-Luis;paiva;admin
-ju;varela;user
-fabio;fernandes;user
-nome;password;user
-jun;hh
 admin;admin
-123;123
+nome;password
+Fabio;fernandes
+ju;varela
+Luis;paiva
