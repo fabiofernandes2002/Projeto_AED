@@ -70,14 +70,12 @@ def ver_mais():
 
 def iniciarSessao(userName, userPass):
     userAutenticado.set(validaConta(userName, userPass))
-    admin = "luis" 
-    if userName == admin:
+    admin = "admin" 
+    pass_admin = "admin"
+    if userName == admin and userPass == pass_admin:
        pagina_inicial_admin()
     else:
         pagina_user()
-    
-
-
     
 
 def fechar(janela_login):
@@ -252,7 +250,7 @@ def pagina_inicial_admin():
     btn_gestao_cat = Button(janela_logada_admin, text="gerir categorias", bg="white" , height=2 , command=gerir_categorias)
     btn_gestao_cat.place(x=30,y=500) 
 
-    btn_gestao_catalogo = Button(janela_logada_admin, text="gerir catalogo", bg="white",height=2)
+    btn_gestao_catalogo = Button(janela_logada_admin, text="gerir catalogo", bg="white",height=2 , command= gerir_catalogo)
     btn_gestao_catalogo.place(x=30,y=555) 
 
     btn_gestao_utilizadores = Button(janela_logada_admin, text="gerir utilizadores" ,bg="white",height=2 , command=gerir_utilizadores)
@@ -437,7 +435,24 @@ def gerir_categorias():
     btn_adicionar_cat = Button(frame_categorias, text="adiconar" , width=15 , height=2)
     btn_adicionar_cat.place(x=150, y=100)
 
-  
+def gerir_catalogo():
+    janela_inicial.withdraw()  # fecha a janela do menu
+    janela_gerir_catalogo = Toplevel()
+    #janela_logada_fav.geometry("800x500")
+    janela_gerir_catalogo.title("favoritos")
+    janela_gerir_catalogo.config(bg="black")
+    janela_gerir_catalogo.focus()
+    janela_gerir_catalogo.grab_set()
+
+    #Get the current screen width and height
+    screenWidth = janela_gerir_catalogo.winfo_screenwidth()
+    screenHeight = janela_gerir_catalogo.winfo_screenheight()
+    appWidth = 800                             # tamanho (pixeis) da window a criar
+    appHeight = 500
+    x = (screenWidth/2) - (appWidth/2)        # posição do canto superior esquerdo da window
+    y = (screenHeight/2) - (appHeight/2)
+    janela_gerir_catalogo.geometry("{:.0f}x{:.0f}+{:.0f}+{:.0f}" .format(appWidth, appHeight, int(x), int(y)))
+
 #favoritos
 def favoritos():
     global list_fav
