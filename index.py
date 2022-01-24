@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import filedialog   # filedialog boxe
 from tkinter import ttk
+
 from PIL import ImageTk, Image
 #from tkVideoPlayer import TkinterVideo
  # importa users.py, ficheiro onde estão definidas algumas funções
@@ -600,7 +601,7 @@ def open_folder_img(janela_gerir_catalogo,img_canvas):
     janela_gerir_catalogo.folder = filedialog.askopenfilename(initialdir=("/"), title="imagens", filetypes=(("jpg files", "*.jpg"), ("png files", "*.png")))
     img_filme = ImageTk.PhotoImage(Image.open(janela_gerir_catalogo.folder))
     img_canvas.create_image(1,1, image = img_filme , anchor="nw" )
-    img_label = label(image = img_filme).pack()
+    img_label = Label(image = img_filme).pack()
    
 #favoritos
 def favoritos():
