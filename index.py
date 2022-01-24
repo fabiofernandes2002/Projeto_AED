@@ -1,9 +1,6 @@
-from ast import Lambda
-from email import message
 from tkinter import *
 from tkinter import filedialog   # filedialog boxe
 from tkinter import ttk
-from unicodedata import category          # treeview
 from PIL import ImageTk, Image
 #from tkVideoPlayer import TkinterVideo
  # importa users.py, ficheiro onde estão definidas algumas funções
@@ -427,7 +424,6 @@ def ver_conteodo():
     btn_adicionar_fav.place(x=500, y=350)
 
 
-
 #gerir utilizadores
 def gerir_utilizadores():
     janela_inicial.withdraw()  # fecha a janela do menu
@@ -552,6 +548,60 @@ def gerir_catalogo():
     y = (screenHeight/2) - (appHeight/2)
     janela_gerir_catalogo.geometry("{:.0f}x{:.0f}+{:.0f}+{:.0f}" .format(appWidth, appHeight, int(x), int(y)))
 
+    lbl_titulo = Label(janela_gerir_catalogo , text= "titulo"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_titulo.place(x=30,y=30)
+
+    entry_titulo = Entry(janela_gerir_catalogo , width=20 , font=('Helvetica', 15) )
+    entry_titulo.place(x=115,y=30)
+       
+    
+    lbl_tipologia = Label(janela_gerir_catalogo , text= "tipologia"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_tipologia.place(x=30,y=80)
+
+    entry_tipologia = Entry(janela_gerir_catalogo , width=20 , font=('Helvetica', 15) )
+    entry_tipologia.place(x=120,y=80)
+       
+       
+    lbl_cat = Label(janela_gerir_catalogo , text= "CATEGORIAS"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_cat.place(x=30,y=130)
+
+    file = open(ficheiro_categorias, "r" , encoding="utf-8")
+    linhas = file.readlines()
+    lista_cat = []
+    file.close()
+    for linha in linhas:
+        lista_cat.append(linha)
+
+    #lista_cat = ['acao', 'romance' , 'comedia' ]
+    listbox_categorias = Listbox(janela_gerir_catalogo, width=25, height=5 , bg="white", relief="sunken")
+    for categorias in lista_cat:
+        listbox_categorias.insert(END, categorias)
+    listbox_categorias.place(x=170,y=130)
+
+    img_canvas = Canvas(janela_gerir_catalogo, width=300, height=210 , bg="white", relief="sunken")    
+    img_canvas.pack(expand= YES, fill= BOTH)
+    img_canvas.place(x=400,y=30)
+
+    btn_img = Button(janela_gerir_catalogo, text="escolher uma imagem" , bg="white" , fg="black" , command=lambda: open_folder_img(janela_gerir_catalogo, img_canvas))
+    btn_img.place(x=470,y=260)
+
+    lbl_descrição = Label(janela_gerir_catalogo, text="descrição", fg="white", bg="black", font=('Helvetica', 15))
+    lbl_descrição.place(x=30, y=250)
+
+    text_descrição = Text(janela_gerir_catalogo, width=25, height=5)
+    text_descrição.place(x=30, y=300)
+
+    btn_adicionar = Button(janela_gerir_catalogo, text="adicionar", )
+    btn_adicionar.place(x=400,y=320)
+
+#abrir uma imagem e adicionar ao canvas 
+def open_folder_img(janela_gerir_catalogo,img_canvas):
+
+    janela_gerir_catalogo.folder = filedialog.askopenfilename(initialdir=("/"), title="imagens", filetypes=(("jpg files", "*.jpg"), ("png files", "*.png")))
+    img_filme = ImageTk.PhotoImage(Image.open(janela_gerir_catalogo.folder))
+    img_canvas.create_image(1,1, image = img_filme , anchor="nw" )
+    img_label = label(image = img_filme).pack()
+   
 #favoritos
 def favoritos():
     global list_fav
