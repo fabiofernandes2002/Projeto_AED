@@ -10,7 +10,8 @@ from users import *
 ficheiro_categorias = "./ficheiros/categorias.txt"
 ficheiro_utilizadores = "./ficheiros/utilizadores.txt"
 ficheiro_utilizadores_removidos = "./ficheiros/removidos.txt"
-
+filmes_series = "./ficheiros/filmes&series.txt"
+fichero_fav = "./ficheiros/favoritos.txt"
 
 window = Tk()
 # window.geometry("800x500")
@@ -106,9 +107,6 @@ def gestao_utilizadores():
         utilizadores.append(informacao[0])
     return utilizadores
 
-
-        
-
 def ler_filmes_series():
     tree_filmes_series.delete(*tree_filmes_series.get_children())  # remove o conteudo da treeview
     pos = lstbox.curselection()     # Item selecionado na Listbox
@@ -135,6 +133,7 @@ def ler_filmes_series():
     if cont ==0:
         messagebox.showwarning("receitas", "Não existem Filmes&Séries registados de momento")
 
+#treeview leitura dos dados dos filmes
 def ler_filmes_series2():
     tree_filmes_series2.delete(*tree_filmes_series2.get_children())  # remove o conteudo da treeview
     pos = listbox_categorias.curselection()     # Item selecionado na Listbox
@@ -161,14 +160,15 @@ def ler_filmes_series2():
     if cont ==0:
         messagebox.showwarning("receitas", "Não existem Filmes&Séries registados de momento")
 
-def ver_mais():
+""" def ver_mais():
     global cont
     global receita_maximo
     # num_visualizacoes.set(str(cont))
     # tipologia.set(tipo)
     # titulo.set(receita_maximo)
 
-def obter_conteodo():
+"""
+def obter_conteodo(): 
     try:
         # Obter dados da linha selecionada da TreeView
         row_id = tree_filmes_series.focus()  # obter o id da linha ativa / selecionada
@@ -203,7 +203,7 @@ def iniciarSessao(userName, userPass):
         pagina_user()
     
     
-
+#fecho de janelas login
 def fechar(janela_login):
     janela_login.destroy()
     janela_inicial.update()
@@ -455,6 +455,7 @@ def pagina_inicial_admin():
     btn_sair = Button(janela_logada_admin, font=("Helvetica",10), bg="white", fg="black",relief="groove", text="Sair", width=10, command=sair)
     btn_sair.place(x=980, y=600)
 
+#pagina depois de selecionar o conteodo da treeview
 def ver_conteodo():
     janela_inicial.withdraw()  # fecha a janela do menu
     janela_logada_conteodo = Toplevel()
@@ -464,24 +465,42 @@ def ver_conteodo():
     janela_logada_conteodo.focus()
     janela_logada_conteodo.grab_set()
 
+    obter_conteodo()
+
     lbl_titulo = Label( janela_logada_conteodo , text= "titulo"  , fg= "white", bg="black",  font=('Helvetica', 15))
     lbl_titulo.place(x=30,y=30)
 
-    entry_titulo = Entry( janela_logada_conteodo , width=20 , font=('Helvetica', 15) , state="readonly")
+    titulo_ver_mais = StringVar
+    titulo_ver_mais = titulo
+    entry_titulo = Entry( janela_logada_conteodo , width=20 , 
+    font=('Helvetica', 15) , textvariable=titulo_ver_mais , state="readonly")
     entry_titulo.place(x=115,y=30)
         
 
-    lbl_tipologia = Label( janela_logada_conteodo , text= "tipologia"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_tipologia = Label( janela_logada_conteodo , text= "tipologia"  , fg= "white", bg="black" ,  font=('Helvetica', 15))
     lbl_tipologia.place(x=30,y=80)
 
-    entry_tipologia = Entry( janela_logada_conteodo , width=20 , font=('Helvetica', 15), state="readonly" )
+    
+    tipologia_ver_mais = tipologia
+    entry_tipologia = Entry( janela_logada_conteodo , width=20 , 
+     textvariable=tipologia_ver_mais ,font=('Helvetica', 15), state="readonly" )
     entry_tipologia.place(x=120,y=80)
         
         
     lbl_cat = Label( janela_logada_conteodo , text= "categorias"  , fg= "white", bg="black",  font=('Helvetica', 15))
     lbl_cat.place(x=30,y=130)
+    
+    categoria = StringVar
+    file = open(filmes_series , "r" , encoding="utf-8")
+    linhas = file.readlines()
+    file.close()
+    for line in linhas:
+        if titulo == linhas:
+            print("entra na condição")
+            categoria = line[line.index(";" , 5)+1, "end"]
 
-    cat_entry = Entry( janela_logada_conteodo, width=20, relief="sunken" , font=('Helvetica', 15) , state="readonly")
+    cat_entry = Entry( janela_logada_conteodo, width=20, relief="sunken"
+     , textvariable=categoria ,  font=('Helvetica', 15) , state="readonly")
     cat_entry.place(x=145,y=130)
 
     img_canvas = Canvas( janela_logada_conteodo, width=300, height=210 , bg="white", relief="sunken")    
@@ -497,11 +516,21 @@ def ver_conteodo():
     avaliação.place(x=500, y=300)
 
 
-    btn_enviar = Button( janela_logada_conteodo, text="enviar" , command="validar_text(avaliação)")
+    btn_enviar = Button( janela_logada_conteodo, text="enviar")# , command="validar_text(avaliação)")
     btn_enviar.place(x=550, y=300)
 
-    btn_adicionar_fav = Button( janela_logada_conteodo, text="adicionar aos favoritos")
+    btn_adicionar_fav = Button( janela_logada_conteodo, text="adicionar aos favoritos" , command= adicionar_favoritos(titulo_ver_mais))
     btn_adicionar_fav.place(x=500, y=350)
+
+def adicionar_favoritos(titulo_ver_mais):
+    nome_user = userName.get()
+    nome_fav = titulo_ver_mais.get()
+    file_fav = open(fichero_fav, "a", encoding="utf-8")
+    linha = nome_user + ";" + nome_fav
+    file_fav.write(linha)
+    file_fav.close
+    #print("esta a entrar na função")
+
 
 
 #gerir utilizadores
@@ -617,7 +646,7 @@ def gerir_catalogo():
     janela_inicial.withdraw()  # fecha a janela do menu
     janela_gerir_catalogo = Toplevel()
     #janela_logada_fav.geometry("800x500")
-    janela_gerir_catalogo.title("favoritos")
+    janela_gerir_catalogo.title("gerir catalogo")
     janela_gerir_catalogo.config(bg="black")
     janela_gerir_catalogo.focus()
     janela_gerir_catalogo.grab_set()
@@ -854,6 +883,7 @@ def mais_detalhes_utilizadores():
                                 command=banir_utilizador)
     btn_banir_user.place(x=180, y=230)
 
+#eleminar
 def banir_utilizador():
     id_user = listbox_utilizadores.curselection()[0] + 1
     f = open(ficheiro_utilizadores, "r", encoding="utf-8")
