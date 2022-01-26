@@ -64,7 +64,6 @@ def adicionar_categoria(linha):
 
     janela_gestao_categorias.withdraw()
     janela_gestao_categorias.after(0, gerir_categorias)
-    linha.delete(0, "end")
 
 def remover_categoria():
     # category = listbox_gerir_categorias.get(listbox_gerir_categorias.curselection()[0])
@@ -192,6 +191,34 @@ def obter_conteodo2():
     except:
         messagebox.showinfo(title="ERRO", message="Seleciona o elemento a ser monstrado" )
 
+def procurar_por_categoria(*args):
+    search_item = search_categorias.get()
+
+    f = open(ficheiro_categorias, "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+
+    lstbox.delete(0, END)
+
+    for item in lista:
+        if search_item.lower() in item.lower():
+            lstbox.insert(END, item)
+
+def procurar_por_titulo():
+    search_t = search_titulo.get()
+
+    f= open(ficheiro_categorias, "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+
+    tree_filmes_series.delete(*tree_filmes_series.get_children())
+
+
+    for item in lista:
+        if search_t.lower() in item.lower():
+            tree_filmes_series.insert(END, item)
+
+
 
 def iniciarSessao(userName, userPass):
     userAutenticado.set(validaConta(userName, userPass))
@@ -279,19 +306,25 @@ def pagina_user():
     lbl_categorias_filtro = Label(frame_filtro, text="Categorias:", fg="white", bg="black",font=("Helvetica",10))
     lbl_categorias_filtro.place(x=25,y=25)
 
-    entry_categorias_filtro = Entry(frame_filtro, width=25)
+    global search_categorias
+    search_categorias = StringVar()
+    search_categorias.trace("w", procurar_por_categoria)
+    entry_categorias_filtro = Entry(frame_filtro, width=25, textvariable=search_categorias)
     entry_categorias_filtro.place(x=100, y=25)
    
     lbl_titulo_filtro = Label(frame_filtro, text="Título:", fg="white", bg="black",font=("Helvetica",10))
     lbl_titulo_filtro.place(x=25,y=55)
 
-    entry_titulo_filtro = Entry(frame_filtro, width=25)
+    global search_titulo
+    search_categorias.trace("w", procurar_por_titulo)
+    search_titulo = StringVar()
+    entry_titulo_filtro = Entry(frame_filtro, width=25, textvariable=search_titulo)
     entry_titulo_filtro.place(x=100, y=55)
 
-    btn_categorias_filtro = Button(frame_filtro, text="Filtrar", fg="black", bg="white",font=("Helvetica",10))
+    btn_categorias_filtro = Button(frame_filtro, text="Filtrar", fg="black", bg="white",font=("Helvetica",10), command=procurar_por_categoria)
     btn_categorias_filtro.place(x=280,y=25)
   
-    btn_titulo_filtro = Button(frame_filtro, text="Filtrar", fg="black", bg="white",font=("Helvetica",10))
+    btn_titulo_filtro = Button(frame_filtro, text="Filtrar", fg="black", bg="white",font=("Helvetica",10), command=procurar_por_titulo)
     btn_titulo_filtro.place(x=280,y=55)
 
     panel_vermais = PanedWindow(janela_user ,width=480, height=150,  bg="white", relief="sunken")
@@ -771,13 +804,13 @@ def login():
 
     #Login
 
-    # img2 = ImageTk.PhotoImage(Image.open("imagens/login_capa.jpg"))
+    # img2 = ImageTk.PhotoImage(Image.open("./imagens/login_capa.jpg"))
 
     # lbl_imagem_fundo2 = Label(window, image=img2, width=800, height=500)
     # lbl_imagem_fundo2.place(x=0, y = 0)
 
-    # lbl_login = Label(janela_login,text="Entra na App", fg="white", bg="black",font=("Helvetica",25))
-    # lbl_login.place(x=250, y=50)
+    lbl_login = Label(janela_login,text="Entra na App", fg="white", bg="black",font=("Helvetica",25))
+    lbl_login.place(x=250, y=50)
 
     #nome
     global userName
@@ -885,13 +918,10 @@ def mais_detalhes_utilizadores():
     tipo_user = Label(frame_utilizador, text=utilizador.get("tipo_user"), font=("Helvetica",10), bg="white", fg="black")
     tipo_user.place(x=200, y=130)
 
-    btn_banir_user = Button(frame_utilizador, text="Remover utilizador",
-                                width=15, height=2, bg="black", relief="groove",fg="white", font=("Helvetica",10),
-                                command=banir_utilizador)
-    btn_banir_user.place(x=180, y=230)
+    btn_remover_user = Button(frame_utilizador, text="Remover utilizador",width=15, height=2, bg="black", relief="groove",fg="white", font=("Helvetica",10),command=remover_utilizador)
+    btn_remover_user.place(x=180, y=230)
 
-#eleminar
-def banir_utilizador():
+def remover_utilizador():
     id_user = listbox_utilizadores.curselection()[0] + 1
     f = open(ficheiro_utilizadores, "r", encoding="utf-8")
     lista_utilizadores = f.readlines()
