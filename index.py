@@ -285,7 +285,7 @@ def pagina_user():
     btn_ver = Button(janela_user,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=ler_filmes_series) 
     btn_ver.place(x=300, y=200)
 
-    btn_favoritos = Button(janela_user,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos ) 
+    btn_favoritos = Button(janela_user,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos() ) 
     btn_favoritos.place(x=450,y=30)
 
     # panel_filmes_series = PanedWindow(janela_user, width=350, height=250 , bg="white", relief="sunken")
@@ -403,10 +403,11 @@ def pagina_inicial_admin():
 
     categorias_admin()
 
-    btn_ver = Button(janela_logada_admin,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=ler_filmes_series2) 
+    btn_ver = Button(janela_logada_admin,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=lambda: ler_filmes_series2()) 
     btn_ver.place(x=300, y=200)
 
-    btn_favoritos = Button(janela_logada_admin,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos ) 
+    btn_favoritos = Button(janela_logada_admin,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20),
+     command=lambda: favoritos()) 
     btn_favoritos.place(x=450,y=30)
 
     # panel_filmes_series = PanedWindow(janela_user, width=350, height=250 , bg="white", relief="sunken")
@@ -819,17 +820,20 @@ def favoritos():
     lbl_fav = Label(janela_logada_fav , text= "favoritos"  , fg= "white", bg="black",  font=('Helvetica', 25))
     lbl_fav.place(x=30,y=30)
 
-    file_fav = open(fichero_fav, "r" , encoding="utf-8")
-    linhas = file_fav.readlines()
-    lista_fav = []
-    for linha in linhas:
-        if  linha[0] == userAutenticado:
-            linha.split(";")
-            lista_fav.append(linha[2:"end"])
+    #file_fav = open(fichero_fav, "r" , encoding="utf-8")  
+    #linhas = file_fav.readlines()
+    #lista_fav = []
+    # for line in linhas:
+    #       line.spli(";")
+    #     if     
+
     list_fav = Listbox(janela_logada_fav, width=25, height=20 , bg="white", relief="sunken",  font=('Helvetica', 15))
-    for favorito in lista_fav:
-        lista_fav.insert(END,favorito)
+    #for favorito in lista_fav:
+    #    lista_fav.insert(END,favorito)
     list_fav.place(x=30, y= 80)
+
+    btn_remover = Button(janela_logada_fav , text="remover", width=10, height=2, font=("Helvetica",10))
+    btn_remover.place(x=380 , y=150)
 
 def login():
     janela_inicial.withdraw()  # fecha a janela do menu
