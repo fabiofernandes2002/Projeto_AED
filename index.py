@@ -9,6 +9,7 @@ from users import *
 
 ficheiro_categorias = "./ficheiros/categorias.txt"
 ficheiro_utilizadores = "./ficheiros/utilizadores.txt"
+ficheiro_utilizadores_removidos = "./ficheiros/removidos.txt"
 
 
 window = Tk()
@@ -35,6 +36,13 @@ def ler_categorias():
     f.close()
     for  linha in lista:
         lstbox.insert("end", linha)
+
+def categorias_admin():
+    f= open(ficheiro_categorias, "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+    for  linha in lista:
+        listbox_categorias.insert("end", linha)
         
 def gestao_categorias():
     f= open(ficheiro_categorias, "r", encoding="utf-8")
@@ -50,9 +58,12 @@ def adicionar_categoria(linha):
         f = open(ficheiro_categorias, "a", encoding="utf-8")
         f.write(linha)
         f.close()
+    
+    
 
     janela_gestao_categorias.withdraw()
     janela_gestao_categorias.after(0, gerir_categorias)
+    linha.delete(0, "end")
 
 def remover_categoria():
     # category = listbox_gerir_categorias.get(listbox_gerir_categorias.curselection()[0])
@@ -82,8 +93,8 @@ def remover_categoria():
     # item_selecionado = listbox_gerir_categorias.curselection()
     # listbox_gerir_categorias.delete(item_selecionado[0])
 
-    # janela_gestao_categorias.withdraw()
-    # janela_gestao_categorias.after(0, gerir_categorias)
+    janela_gestao_categorias.withdraw()
+    janela_gestao_categorias.after(0, gerir_categorias)
 
 def gestao_utilizadores():
     f = open(ficheiro_utilizadores, "r", encoding="utf-8")
@@ -95,24 +106,8 @@ def gestao_utilizadores():
         utilizadores.append(informacao[0])
     return utilizadores
 
-def mais_detalhes_utilizadores():
-    id_user = listbox_utilizadores.curselection()[0] + 1
-    f = open(ficheiro_utilizadores, "r", encoding="utf-8")
-    linha_users = f.readlines()[id_user]
-    f.close()
 
-    linha_utilizador = linha_users[0:len(linha_users)-1].split(";")
-
-    global utilizador
-    utilizador = {}
-    for i in range(len(linha_utilizador)):
-        if i == 0:
-            utilizador["userName"] = linha_utilizador[0]
-        if i == 1:
-            utilizador["email"] = linha_utilizador[1]
-        if i == 3:
-            utilizador["tipo_user"] = linha_utilizador[3]
-
+        
 
 def ler_filmes_series():
     tree_filmes_series.delete(*tree_filmes_series.get_children())  # remove o conteudo da treeview
@@ -140,6 +135,32 @@ def ler_filmes_series():
     if cont ==0:
         messagebox.showwarning("receitas", "Não existem Filmes&Séries registados de momento")
 
+def ler_filmes_series2():
+    tree_filmes_series2.delete(*tree_filmes_series2.get_children())  # remove o conteudo da treeview
+    pos = listbox_categorias.curselection()     # Item selecionado na Listbox
+    categoria = listbox_categorias.get(pos)     # categoria selecionada
+    f = open("ficheiros\\filmes&series.txt", "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+
+    global cont
+    global receita_maximo
+    global tipo
+    cont=0
+    maximo =0
+    receita_maximo=""
+    for  linha in lista:
+        campos = linha.split(";")
+        if categoria == campos[3]:
+            tree_filmes_series2.insert("","end", values = (campos[0], campos[1], campos[2]))
+            cont+=1
+            if int(campos[2]) > maximo:
+                maximo = int(campos[2])
+                tipo = campos[1]
+                receita_maximo = campos[0]
+    if cont ==0:
+        messagebox.showwarning("receitas", "Não existem Filmes&Séries registados de momento")
+
 def ver_mais():
     global cont
     global receita_maximo
@@ -159,6 +180,18 @@ def obter_conteodo():
     except:
         messagebox.showinfo(title="ERRO", message="Seleciona o elemento a ser monstrado" )
 
+def obter_conteodo2():
+    try:
+        # Obter dados da linha selecionada da TreeView
+        row_id = tree_filmes_series2.focus()  # obter o id da linha ativa / selecionada
+        lista = tree_filmes_series2.item(row_id)
+        # dados obtidos da treeView sáo atribuidos às variáveis associadas às Entrys
+        titulo.set(lista["values"][0])
+        tipologia.set(lista["values"][1])
+        num_visualizacoes.set(lista["values"][2])
+    except:
+        messagebox.showinfo(title="ERRO", message="Seleciona o elemento a ser monstrado" )
+
 
 def iniciarSessao(userName, userPass):
     userAutenticado.set(validaConta(userName, userPass))
@@ -168,6 +201,7 @@ def iniciarSessao(userName, userPass):
        pagina_inicial_admin()
     else:
         pagina_user()
+    
     
 
 def fechar(janela_login):
@@ -190,6 +224,7 @@ def apagar_janela_login(window):
 # pagina do user normal
 def pagina_user():
     global janela_login
+    global janela_user
     janela_login.withdraw()  # fecha a janela do menu
     janela_user = Toplevel()
     #janela_user.geometry("800x800")
@@ -292,10 +327,22 @@ def pagina_user():
     txt_vizualizaçoes =Entry(panel_vermais, width=34 , state="readonly", text="Nº de vizualizaçoes", textvariable=num_visualizacoes)
     txt_vizualizaçoes.place(x=240,y=95)
 
+    btn_sair = Button(janela_user, font=("Helvetica",10), bg="white", fg="black",relief="groove", text="Sair", width=10, command=sair2)
+    btn_sair.place(x=980, y=600)
+
+def sair():
+    janela_logada_admin.destroy()
+    janela_inicial.deiconify()
+
+def sair2():
+    janela_user.destroy()
+    janela_inicial.deiconify()
+
 
 #pagina de administrador
 def pagina_inicial_admin():
     janela_inicial.withdraw()  # fecha a janela do menu
+    global janela_logada_admin
     janela_logada_admin = Toplevel()
     #janela_logada_admin.geometry("800x800")
     janela_logada_admin.title("Página admin")
@@ -315,31 +362,31 @@ def pagina_inicial_admin():
     lbl_cat = Label(janela_logada_admin , text= "CATEGORIAS"  , fg= "white", bg="black",  font=('Helvetica', 25))
     lbl_cat.place(x=30,y=30)
 
-  
-    lista_categorias= ['acao', 'comedia', 'aventura', 'romance', 'terror'  ]
-
+    global listbox_categorias
     listbox_categorias = Listbox(janela_logada_admin, width=25, height=20 , bg="white", relief="sunken")
-    for categorias in lista_categorias:
-        listbox_categorias.insert(END, categorias)
     listbox_categorias.place(x=30, y= 80)
 
+    categorias_admin()
 
-
-
-    btn_ver = Button(janela_logada_admin,activebackground="blue", bd=0, anchor="w" , bg="white", text="visualizar" , fg="black", font=('Helvetica', 10 ), command=pagina_inicial_admin) 
+    btn_ver = Button(janela_logada_admin,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=ler_filmes_series2) 
     btn_ver.place(x=300, y=200)
 
-    panel_filmes_series = PanedWindow(janela_logada_admin, width=300, height=250 , bg="white", relief="sunken")
-    panel_filmes_series.place(x=450, y= 110)
+    btn_favoritos = Button(janela_logada_admin,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos ) 
+    btn_favoritos.place(x=450,y=30)
 
-    tree_filmes_series = ttk.Treeview(panel_filmes_series, selectmode="browse", columns=("filmes e series" ,"visualizaçoes") , show="headings")
-    tree_filmes_series.place(x=1,y=1)
+    # panel_filmes_series = PanedWindow(janela_user, width=350, height=250 , bg="white", relief="sunken")
+    # panel_filmes_series.place(x=450, y= 110)
+    global tree_filmes_series2
+    tree_filmes_series2 = ttk.Treeview(janela_logada_admin, selectmode="browse", columns=("Filmes e Séries" ,"Tipologia","Visualizações") , show="headings")
+    tree_filmes_series2.place(x=450,y=110)
 
-    tree_filmes_series.column("filmes e series", anchor="w" , width=150)
-    tree_filmes_series.column("visualizaçoes", anchor="e" , width=150)
+    tree_filmes_series2.column("Filmes e Séries", anchor="w" , width=250)
+    tree_filmes_series2.column("Tipologia", anchor="c" , width=150)
+    tree_filmes_series2.column("Visualizações", anchor="c" , width=120)
 
-    tree_filmes_series.heading("filmes e series", text="filmes e series")
-    tree_filmes_series.heading("visualizaçoes", text="visualizaçoes")
+    tree_filmes_series2.heading("Filmes e Séries", text="Filmes e Séries")
+    tree_filmes_series2.heading("Tipologia", text="Tipologia")
+    tree_filmes_series2.heading("Visualizações", text="Visualizações")
 
     btn_gestao_cat = Button(janela_logada_admin, text="gerir categorias", bg="white" , height=2 , command=gerir_categorias)
     btn_gestao_cat.place(x=30,y=500) 
@@ -351,30 +398,62 @@ def pagina_inicial_admin():
     btn_gestao_utilizadores.place(x=30,y=610) 
 
 
-    panel_vermais = PanedWindow(janela_logada_admin ,width=420, height=150,  bg="white", relief="sunken")
-    panel_vermais.place(x=500, y= 500)
+    # frame_filtro =  LabelFrame(janela_logada_admin, text="Filtros" ,width=380, height=150, relief="sunken",fg="white", bg="black")
+    # frame_filtro.place(x=30,y=500) 
 
+    # lbl_categorias_filtro = Label(frame_filtro, text="Categorias:", fg="white", bg="black",font=("Helvetica",10))
+    # lbl_categorias_filtro.place(x=25,y=25)
+
+    # entry_categorias_filtro = Entry(frame_filtro, width=25)
+    # entry_categorias_filtro.place(x=100, y=25)
+   
+    # lbl_titulo_filtro = Label(frame_filtro, text="Título:", fg="white", bg="black",font=("Helvetica",10))
+    # lbl_titulo_filtro.place(x=25,y=55)
+
+    # entry_titulo_filtro = Entry(frame_filtro, width=25)
+    # entry_titulo_filtro.place(x=100, y=55)
+
+    # btn_categorias_filtro = Button(frame_filtro, text="Filtrar", fg="black", bg="white",font=("Helvetica",10))
+    # btn_categorias_filtro.place(x=280,y=25)
+  
+    # btn_titulo_filtro = Button(frame_filtro, text="Filtrar", fg="black", bg="white",font=("Helvetica",10))
+    # btn_titulo_filtro.place(x=280,y=55)
+
+    panel_vermais = PanedWindow(janela_logada_admin ,width=480, height=150,  bg="white", relief="sunken")
+    panel_vermais.place(x=450, y= 500)
+
+    btn_obter = Button(panel_vermais, text="Obter", fg="black", bg="white", font=("Helvetica", 10), command=obter_conteodo2)
+    btn_obter.place(x=25, y=35)
 
     btn_vermais = Button(panel_vermais, text="Ver +", fg="black", bg="white",font=("Helvetica",10), command=ver_conteodo)
     btn_vermais.place(x=25,y=75)
 
-    lbl_titulo = Label(panel_vermais, text="titulo:", fg="black" ,font=("Helvetica",10))
+    lbl_titulo = Label(panel_vermais, text="Título:", fg="black" ,font=("Helvetica",10))
     lbl_titulo.place(x=100,y=35)
 
-    txt_titulo = Entry(panel_vermais, width=25, state="readonly", text="titulo")
+    global titulo
+    titulo = StringVar()
+    txt_titulo = Entry(panel_vermais, width=34, state="readonly", text="titulo", textvariable=titulo)
     txt_titulo.place(x=240,y=35)
 
-    lbl_tipologia = Label(panel_vermais, text="tipologia:", fg="black",font=("Helvetica",10))
+    lbl_tipologia = Label(panel_vermais, text="Tipologia:", fg="black",font=("Helvetica",10))
     lbl_tipologia.place(x=100,y=65)
     
-    txt_tipologia = Entry(panel_vermais, width=25 , state="readonly", text="tipologia")
+    global tipologia
+    tipologia = StringVar()
+    txt_tipologia = Entry(panel_vermais, width=34 , state="readonly", text="tipologia", textvariable=tipologia)
     txt_tipologia.place(x=240,y=65)
     
-    lbl_vizualizaçoes = Label(panel_vermais, text="Nº de vizualizaçoes:", fg="black",font=("Helvetica",10))
+    lbl_vizualizaçoes = Label(panel_vermais, text="Nº de Vizualizaçoes:", fg="black",font=("Helvetica",10))
     lbl_vizualizaçoes.place(x=100,y=95)
 
-    txt_vizualizaçoes =Entry(panel_vermais, width=25 , state="readonly", text="Nº de vizualizaçoes")
+    global num_visualizacoes
+    num_visualizacoes = StringVar()
+    txt_vizualizaçoes =Entry(panel_vermais, width=34 , state="readonly", text="Nº de vizualizaçoes", textvariable=num_visualizacoes)
     txt_vizualizaçoes.place(x=240,y=95)
+
+    btn_sair = Button(janela_logada_admin, font=("Helvetica",10), bg="white", fg="black",relief="groove", text="Sair", width=10, command=sair)
+    btn_sair.place(x=980, y=600)
 
 def ver_conteodo():
     janela_inicial.withdraw()  # fecha a janela do menu
@@ -428,6 +507,7 @@ def ver_conteodo():
 #gerir utilizadores
 def gerir_utilizadores():
     janela_inicial.withdraw()  # fecha a janela do menu
+    global janela_gerir_utilizadores
     janela_gerir_utilizadores = Toplevel()
     #janela_gerir_utilizadores.geometry("800x500")
     janela_gerir_utilizadores.title("gerir utilizadores")
@@ -455,34 +535,36 @@ def gerir_utilizadores():
             listbox_utilizadores.insert(END, user)
     listbox_utilizadores.place(x=30, y= 80)
 
-    btn_detalhes =Button(janela_gerir_utilizadores, text="mais detalhes", bg="white" , height=4 , width=15, command=lambda:mais_detalhes_utilizadores(utilizador.get("userName")))
+    
+    btn_detalhes =Button(janela_gerir_utilizadores, text="mais detalhes", bg="white" , height=4 , width=15, command=mais_detalhes_utilizadores)
     btn_detalhes.place(x=250,y=150)
 
-    frame_utilzadores =  LabelFrame(janela_gerir_utilizadores, text="utilzadores" ,width=350, height=250, relief="sunken",fg="white", bg="black")
-    frame_utilzadores.place(x=400,y=90) 
 
-    lbl_username = Label(frame_utilzadores, text="nome:", fg="black" ,font=("Helvetica",10))
-    lbl_username.place(x=20,y=35)
+    # frame_utilzadores =  LabelFrame(janela_gerir_utilizadores, text="utilzadores" ,width=350, height=250, relief="sunken",fg="white", bg="black")
+    # frame_utilzadores.place(x=400,y=90) 
 
-    global utilizador
-    utilizador = StringVar()
-    txt_username = Entry(frame_utilzadores, width=25, state="readonly", text="titulo", textvariable=utilizador)
-    txt_username.place(x=80,y=35)
+    # lbl_username = Label(frame_utilzadores, text="nome:", fg="black" ,font=("Helvetica",10))
+    # lbl_username.place(x=20,y=35)
 
-    lbl_email = Label(frame_utilzadores, text="email:", fg="black",font=("Helvetica",10))
-    lbl_email.place(x=20,y=65)
+    # global utilizador
+    # utilizador = StringVar()
+    # txt_username = Entry(frame_utilzadores, width=25, state="readonly", text="titulo", textvariable=utilizador)
+    # txt_username.place(x=80,y=35)
+
+    # lbl_email = Label(frame_utilzadores, text="email:", fg="black",font=("Helvetica",10))
+    # lbl_email.place(x=20,y=65)
     
-    txt_email = Entry(frame_utilzadores, width=25 , state="readonly", text="email")
-    txt_email.place(x=80,y=65)
+    # txt_email = Entry(frame_utilzadores, width=25 , state="readonly", text="email")
+    # txt_email.place(x=80,y=65)
     
-    lbl_tipo = Label(frame_utilzadores, text="tipo de utilzador:", fg="black",font=("Helvetica",10))
-    lbl_tipo.place(x=20,y=95)
+    # lbl_tipo = Label(frame_utilzadores, text="tipo de utilzador:", fg="black",font=("Helvetica",10))
+    # lbl_tipo.place(x=20,y=95)
 
-    txt_tipo =Entry(frame_utilzadores, width=25 , state="readonly", text="Nº de vizualizaçoes")
-    txt_tipo.place(x=140,y=95)
+    # txt_tipo =Entry(frame_utilzadores, width=25 , state="readonly", text="Nº de vizualizaçoes")
+    # txt_tipo.place(x=140,y=95)
 
-    btn_remover = Button(frame_utilzadores, text="remover utilizador", fg="black" , bg="white" )
-    btn_remover.place(x=100 , y=130 )
+    # btn_remover = Button(frame_utilzadores, text="remover utilizador", fg="black" , bg="white" )
+    # btn_remover.place(x=100 , y=130 )
 
 #gerir categorias
 def gerir_categorias():
@@ -709,7 +791,8 @@ nome_utilizador.insert(0, "nome")
 nome_utilizador.place(x=250, y=110)
 
 #email
-email_utilizador = Entry(window, width=31, font=("Helvetica",10))
+userEmail = StringVar()
+email_utilizador = Entry(window, width=31, font=("Helvetica",10), textvariable=userEmail)
 email_utilizador.insert(0,"email")
 email_utilizador.place(x=250, y=150)
 
@@ -721,12 +804,82 @@ pass_utilizador.place(x=250, y=190)
 
 #button registar
 btn_registar = Button(window, text="Registar", width=10, height=2, font=("Helvetica",10),
-                command= lambda:[criaConta(userName.get(), userPass.get())])
+                command= lambda:[criaConta(userName.get(), userEmail.get() ,userPass.get())])
 btn_registar.place(x=310, y=230)
 
 #button no caso de tiver conta
 btn_conta = Button(window, text="Já tenho conta!", width=26, height=2, font=("Helvetica", 10), command=login)
 btn_conta.place(x=250, y= 310)
+
+def mais_detalhes_utilizadores():
+    id_user = listbox_utilizadores.curselection()[0] + 1
+    f = open(ficheiro_utilizadores, "r", encoding="utf-8")
+    linha_users = f.readlines()[id_user]
+    f.close()
+
+    linha_utilizador = linha_users[0:len(linha_users)-1].split(";")
+
+    utilizador = {}
+    for i in range(len(linha_utilizador)):
+        if i == 0:
+            utilizador["userName"] = linha_utilizador[0]
+        if i == 1:
+            utilizador["userEmail"] = linha_utilizador[1]
+        if i == 3:
+            utilizador["tipo_user"] = linha_utilizador[3]
+
+    frame_utilizador = LabelFrame(janela_gerir_utilizadores, text="Utilizador",width=400, height=340, font=("Helvetica",10), bg="white")
+    frame_utilizador.place(x=500, y=100)
+
+    label_utilizador = Label(frame_utilizador, text="Nome de utilizador",font=("Helvetica",10), bg="white", fg="black")
+    label_utilizador.place(x=20, y=30)
+
+    nome_utilizador = Label(frame_utilizador, text=utilizador.get("userName"), font=("Helvetica",10), bg="white", fg="black")
+    nome_utilizador.place(x=200, y=30)
+
+    label_email = Label(frame_utilizador, text="Email",font=("Helvetica",10), bg="white", fg="black")
+    label_email.place(x=20, y=80)
+    
+    email = Label(frame_utilizador, text=utilizador.get("userEmail"), font=("Helvetica",10), bg="white", fg="black")
+    email.place(x=200, y=80)
+    
+    label_tipo_user = Label(frame_utilizador, text="Tipo de utilizador",font=("Helvetica",10), bg="white", fg="black")
+    label_tipo_user.place(x=20, y=130)
+    
+    tipo_user = Label(frame_utilizador, text=utilizador.get("tipo_user"), font=("Helvetica",10), bg="white", fg="black")
+    tipo_user.place(x=200, y=130)
+
+    btn_banir_user = Button(frame_utilizador, text="Remover utilizador",
+                                width=15, height=2, bg="black", relief="groove",fg="white", font=("Helvetica",10),
+                                command=banir_utilizador)
+    btn_banir_user.place(x=180, y=230)
+
+def banir_utilizador():
+    id_user = listbox_utilizadores.curselection()[0] + 1
+    f = open(ficheiro_utilizadores, "r", encoding="utf-8")
+    lista_utilizadores = f.readlines()
+    f.close()
+
+    utilizador = lista_utilizadores[id_user]
+    nova_lista = ""
+
+    for user in lista_utilizadores:
+        if user != utilizador:
+            nova_lista += user
+
+    f = open(ficheiro_utilizadores, "w", encoding="utf-8")
+    f.write(nova_lista)
+    f.close()
+
+    # adicionar a lista de emails proibidos
+    email = utilizador.split(";")[1] + "\n"
+    f = open(ficheiro_utilizadores_removidos, "w")
+    f.write(email)
+    f.close()
+
+    janela_gerir_utilizadores.withdraw()
+    janela_gerir_utilizadores.after(100, gerir_utilizadores)
+    
 
 
 window.mainloop()

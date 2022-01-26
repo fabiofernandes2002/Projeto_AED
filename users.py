@@ -18,7 +18,7 @@ def validaConta(userName, userPass):
     f.close()
     for linha in listaUsers:
         fields = linha.split(";")
-        if fields[0] == userName and fields[1][:-1] == userPass:
+        if fields[0] == userName and fields[2]== userPass:
             msg = "Bem-Vindo " + userName
             messagebox.showinfo("Iniciar Sessão", msg)
             return userName
@@ -27,9 +27,9 @@ def validaConta(userName, userPass):
     
 
 
-def criaConta(userName, userPass):
-    if userName == "" or userPass == "":
-        messagebox.showerror("Criar Conta", "O username e a password não podem ser vazios!")
+def criaConta(userName, userEmail ,userPass):
+    if userName == "" or userEmail == "" or userPass == "":
+        messagebox.showerror("Criar Conta", "Os campos não podem ser vazios!")
         return         
     f=open(fUsers, "r", encoding="utf-8")
     listaUsers = f.readlines()
@@ -40,7 +40,7 @@ def criaConta(userName, userPass):
             messagebox.showerror("Criar Conta", "Já existe um utilizador com esse username!")
             return 
     f = open(fUsers, "a")
-    linha = userName + ";" + userPass + "\n"
+    linha = userName + ";" + userEmail + ";" + userPass + ";user" + "\n"
     f.write(linha)
     f.close()
     messagebox.showinfo("Criar Conta", "Conta criada com sucesso!")

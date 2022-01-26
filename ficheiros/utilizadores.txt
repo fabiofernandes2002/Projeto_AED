@@ -1,5 +1,4 @@
-admin;admin
-nome;password
-Fabio;fernandes
-ju;varela
-Luis;paiva
+admin;admin@gamil.com;admin;admin
+nome;nome@gmail.com;password;user
+Fabio;fabio@gmail.com;fernandes;user
+Luis;luis@gamil.com;paiva;user
