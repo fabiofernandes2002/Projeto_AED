@@ -5,12 +5,10 @@ from PIL import ImageTk, Image
 #from tkVideoPlayer import TkinterVideo
 from tkinter import messagebox
 
-
 fUsers = "./ficheiros/utilizadores.txt"
 
 # Funções relacionadas com o User
 # Registar, Iniciar Sessão
-
 
 def validaConta(userName, userPass):
     f=open(fUsers, "r", encoding="utf-8")
@@ -25,8 +23,6 @@ def validaConta(userName, userPass):
     messagebox.showerror("Iniciar Sessão", "O UserName ou a Password estão incorretos!")
     return ""
     
-
-
 def criaConta(userName, userEmail ,userPass):
     if userName == "" or userEmail == "" or userPass == "":
         messagebox.showerror("Criar Conta", "Os campos não podem ser vazios!")

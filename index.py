@@ -716,6 +716,7 @@ def open_folder_img(janela_gerir_catalogo,img_canvas):
    
 #favoritos
 def favoritos():
+    #adicionar_favoritos(titulo_ver_mais)
     global list_fav
     janela_inicial.withdraw()  # fecha a janela do menu
     janela_logada_fav = Toplevel()
@@ -737,7 +738,13 @@ def favoritos():
     lbl_fav = Label(janela_logada_fav , text= "favoritos"  , fg= "white", bg="black",  font=('Helvetica', 25))
     lbl_fav.place(x=30,y=30)
 
-    lista_fav = ['spider-man', 'adeus' , 'teste']
+    file_fav = open(fichero_fav, "r" , encoding="utf-8")
+    linhas = file_fav.readlines()
+    lista_fav = []
+    for linha in linhas:
+        if  linha[0] == userAutenticado:
+            linha.split(";")
+            lista_fav.append(linha[2:"end"])
     list_fav = Listbox(janela_logada_fav, width=25, height=20 , bg="white", relief="sunken",  font=('Helvetica', 15))
     for favorito in lista_fav:
         lista_fav.insert(END,favorito)
