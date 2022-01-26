@@ -1,3 +1,4 @@
+from email import message
 from tkinter import *
 from tkinter import filedialog   # filedialog boxe
 from tkinter import ttk
@@ -12,6 +13,7 @@ ficheiro_utilizadores = "./ficheiros/utilizadores.txt"
 ficheiro_utilizadores_removidos = "./ficheiros/removidos.txt"
 filmes_series = "./ficheiros/filmes&series.txt"
 fichero_fav = "./ficheiros/favoritos.txt"
+ficheiro_descrição = "./ficheiros/descrição.txt"
 
 window = Tk()
 # window.geometry("800x500")
@@ -526,11 +528,13 @@ def ver_conteodo():
     categoria = StringVar
     file = open(filmes_series , "r" , encoding="utf-8")
     linhas = file.readlines()
-    file.close()
     for line in linhas:
-        if titulo == linhas:
+        line.split(";")
+        if line[0] == titulo_ver_mais.get():
+
             print("entra na condição")
-            categoria = line[line.index(";" , 5)+1, "end"]
+            categoria = line[3]
+    file.close()
 
     cat_entry = Entry( janela_logada_conteodo, width=20, relief="sunken"
      , textvariable=categoria ,  font=('Helvetica', 15) , state="readonly")
@@ -542,7 +546,16 @@ def ver_conteodo():
     lbl_descrição = Label( janela_logada_conteodo, text="descrição", fg="white", bg="black", font=('Helvetica', 15))
     lbl_descrição.place(x=30, y=250)
 
-    text_descrição = Text( janela_logada_conteodo, width=25, height=5 , font=('Helvetica', 15),  state="disable")
+    
+    #descriçao_txt = StringVar                                            abrir ficheiro da descrição 
+    #file_descriçao = open(ficheiro_descrição , "r" , encoding="utf-8")   tentar procurar o titulo selecionado da treeview 
+    #desc_linha = file_descriçao.readlines()                              e igualar a Text ao 2 posição da lina
+    #for linha in desc_linha:
+    #         desc_linha.split(";")
+    #    if linha[0] == titulo_ver_mais:
+    #        descriçao_txt = linha[1] 
+
+    text_descrição = Text( janela_logada_conteodo, width=25, height=5 , font=('Helvetica', 15), state="disable") #, textvariable=descriçao_txt)
     text_descrição.place(x=30, y=300)
 
     avaliação = Entry( janela_logada_conteodo , width=5, )
@@ -559,11 +572,10 @@ def adicionar_favoritos(titulo_ver_mais):
     nome_user = userName.get()
     nome_fav = titulo_ver_mais.get()
     file_fav = open(fichero_fav, "a", encoding="utf-8")
-    linha = nome_user + ";" + nome_fav
+    linha = nome_user + ";" + nome_fav + "\n"
     file_fav.write(linha)
     file_fav.close
     #print("esta a entrar na função")
-
 
 
 #gerir utilizadores
@@ -696,6 +708,7 @@ def gerir_catalogo():
     lbl_titulo = Label(janela_gerir_catalogo , text= "titulo"  , fg= "white", bg="black",  font=('Helvetica', 15))
     lbl_titulo.place(x=30,y=30)
 
+    global entry_titulo 
     entry_titulo = Entry(janela_gerir_catalogo , width=20 , font=('Helvetica', 15) )
     entry_titulo.place(x=115,y=30)
        
@@ -718,10 +731,8 @@ def gerir_catalogo():
         lista_cat.append(linha)
 
     #lista_cat = ['acao', 'romance' , 'comedia' ]
-    listbox_categorias = Listbox(janela_gerir_catalogo, width=25, height=5 , bg="white", relief="sunken")
-    for categorias in lista_cat:
-        listbox_categorias.insert(END, categorias)
-    listbox_categorias.place(x=170,y=130)
+    txt_categorias = Entry(janela_gerir_catalogo, width=20 , bg="white", relief="sunken" ,  font=('Helvetica', 15))
+    txt_categorias.place(x=170,y=130)
 
     img_canvas = Canvas(janela_gerir_catalogo, width=300, height=210 , bg="white", relief="sunken")    
     img_canvas.pack(expand= YES, fill= BOTH)
@@ -732,12 +743,42 @@ def gerir_catalogo():
 
     lbl_descrição = Label(janela_gerir_catalogo, text="descrição", fg="white", bg="black", font=('Helvetica', 15))
     lbl_descrição.place(x=30, y=250)
-
+    global text_descrição 
     text_descrição = Text(janela_gerir_catalogo, width=25, height=5)
     text_descrição.place(x=30, y=300)
 
-    btn_adicionar = Button(janela_gerir_catalogo, text="adicionar", )
+    btn_adicionar = Button(janela_gerir_catalogo, text="adicionar",
+     command=lambda: adicionar_filme_serie(txt_categorias , entry_titulo , entry_tipologia ,text_descrição ))
     btn_adicionar.place(x=400,y=320)
+
+def adicionar_filme_serie(txt_categorias, entry_tipologia, entry_titulo  ,text_descrição ):
+    descrição_serie_filme(text_descrição,entry_titulo)
+    file = open(filmes_series , "a" , encoding="utf-8" )
+    file_cat = open(ficheiro_categorias, "r" , encoding="utf-8")
+    lista_cat = []
+    linhas_cat = file_cat.readlines()
+    for categoria in linhas_cat:
+        lista_cat.append(categoria)
+    
+    titulo = entry_titulo.get()
+    categorias = txt_categorias.get()
+    tipologia = entry_tipologia.get()
+
+
+    linha = titulo + ";" + tipologia + ";" + ";" + categorias
+    file.write(linha)
+    file.close()
+    file_cat.close()
+
+#guardar num ficheiro a parte o titulo juntamente com a descrição
+def descrição_serie_filme(text_descrição,entry_titulo):
+    file = open(ficheiro_descrição , "a" , encoding="utf-8")
+    descrição_elemento =text_descrição.get("1.0" , "end-1c")
+    titulo = entry_titulo.get()
+    linha = titulo + ";" + descrição_elemento
+
+    file.write(linha)
+    file.close()
 
 #abrir uma imagem e adicionar ao canvas 
 def open_folder_img(janela_gerir_catalogo,img_canvas):
