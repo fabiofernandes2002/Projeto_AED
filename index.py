@@ -1,3 +1,4 @@
+from dataclasses import InitVar
 from email import message
 from tkinter import *
 from tkinter import filedialog   # filedialog boxe
@@ -117,11 +118,11 @@ def ler_filmes_series():
     f.close()
 
     global cont
-    global receita_maximo
+    global filme_maximo
     global tipo
     cont=0
     maximo =0
-    receita_maximo=""
+    filme_maximo=""
     for  linha in lista:
         campos = linha.split(";")
         if categoria == campos[3]:
@@ -130,7 +131,7 @@ def ler_filmes_series():
             if int(campos[2]) > maximo:
                 maximo = int(campos[2])
                 tipo = campos[1]
-                receita_maximo = campos[0]
+                filme_maximo = campos[0]
     if cont ==0:
         messagebox.showwarning("receitas", "Não existem Filmes&Séries registados de momento")
 
@@ -144,11 +145,11 @@ def ler_filmes_series2():
     f.close()
 
     global cont
-    global receita_maximo
+    global filme_maximo
     global tipo
     cont=0
     maximo =0
-    receita_maximo=""
+    filme_maximo=""
     for  linha in lista:
         campos = linha.split(";")
         if categoria == campos[3]:
@@ -157,7 +158,7 @@ def ler_filmes_series2():
             if int(campos[2]) > maximo:
                 maximo = int(campos[2])
                 tipo = campos[1]
-                receita_maximo = campos[0]
+                filme_maximo = campos[0]
     if cont ==0:
         messagebox.showwarning("receitas", "Não existem Filmes&Séries registados de momento")
 
@@ -169,6 +170,15 @@ def ler_filmes_series2():
     # titulo.set(receita_maximo)
 
 """
+def listar_favoritos():
+    f = open(fichero_fav, "r", encoding="utf-8")
+    lista = f.readlines()
+    f.close()
+
+    for  linha in lista:
+        list_fav.insert("end", linha)
+
+
 def obter_conteodo(): 
     try:
         # Obter dados da linha selecionada da TreeView
@@ -285,7 +295,7 @@ def pagina_user():
     btn_ver = Button(janela_user,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=ler_filmes_series) 
     btn_ver.place(x=300, y=200)
 
-    btn_favoritos = Button(janela_user,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos() ) 
+    btn_favoritos = Button(janela_user,activebackground="grey", bd=0, anchor="w" , bg="white", text="Meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos() ) 
     btn_favoritos.place(x=450,y=30)
 
     # panel_filmes_series = PanedWindow(janela_user, width=350, height=250 , bg="white", relief="sunken")
@@ -406,8 +416,7 @@ def pagina_inicial_admin():
     btn_ver = Button(janela_logada_admin,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=lambda: ler_filmes_series2()) 
     btn_ver.place(x=300, y=200)
 
-    btn_favoritos = Button(janela_logada_admin,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20),
-     command=lambda: favoritos()) 
+    btn_favoritos = Button(janela_logada_admin,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20)) 
     btn_favoritos.place(x=450,y=30)
 
     # panel_filmes_series = PanedWindow(janela_user, width=350, height=250 , bg="white", relief="sunken")
@@ -424,13 +433,13 @@ def pagina_inicial_admin():
     tree_filmes_series2.heading("Tipologia", text="Tipologia")
     tree_filmes_series2.heading("Visualizações", text="Visualizações")
 
-    btn_gestao_cat = Button(janela_logada_admin, text="gerir categorias", bg="white" , height=2 , command=gerir_categorias)
+    btn_gestao_cat = Button(janela_logada_admin, text="Gerir categorias", bg="white" ,width=20 ,height=2 , command=gerir_categorias)
     btn_gestao_cat.place(x=30,y=500) 
 
-    btn_gestao_catalogo = Button(janela_logada_admin, text="gerir catalogo", bg="white",height=2 , command= gerir_catalogo)
+    btn_gestao_catalogo = Button(janela_logada_admin, text="Gerir catalogo", bg="white", width=20,height=2 , command= gerir_catalogo)
     btn_gestao_catalogo.place(x=30,y=555) 
 
-    btn_gestao_utilizadores = Button(janela_logada_admin, text="gerir utilizadores" ,bg="white",height=2 , command=gerir_utilizadores)
+    btn_gestao_utilizadores = Button(janela_logada_admin, text="Gerir utilizadores" ,bg="white", width=20,height=2 , command=gerir_utilizadores)
     btn_gestao_utilizadores.place(x=30,y=610) 
 
 
@@ -503,7 +512,7 @@ def ver_conteodo():
 
     obter_conteodo()
 
-    lbl_titulo = Label( janela_logada_conteodo , text= "titulo"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_titulo = Label( janela_logada_conteodo , text= "Título"  , fg= "white", bg="black",  font=('Helvetica', 15))
     lbl_titulo.place(x=30,y=30)
 
     titulo_ver_mais = StringVar
@@ -513,7 +522,7 @@ def ver_conteodo():
     entry_titulo.place(x=115,y=30)
         
 
-    lbl_tipologia = Label( janela_logada_conteodo , text= "tipologia"  , fg= "white", bg="black" ,  font=('Helvetica', 15))
+    lbl_tipologia = Label( janela_logada_conteodo , text= "Tipologia"  , fg= "white", bg="black" ,  font=('Helvetica', 15))
     lbl_tipologia.place(x=30,y=80)
 
     
@@ -523,7 +532,7 @@ def ver_conteodo():
     entry_tipologia.place(x=120,y=80)
         
         
-    lbl_cat = Label( janela_logada_conteodo , text= "categorias"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_cat = Label( janela_logada_conteodo , text= "Categorias"  , fg= "white", bg="black",  font=('Helvetica', 15))
     lbl_cat.place(x=30,y=130)
     
     categoria = StringVar
@@ -544,7 +553,7 @@ def ver_conteodo():
     img_canvas = Canvas( janela_logada_conteodo, width=300, height=210 , bg="white", relief="sunken")    
     img_canvas.place(x=400,y=30)
 
-    lbl_descrição = Label( janela_logada_conteodo, text="descrição", fg="white", bg="black", font=('Helvetica', 15))
+    lbl_descrição = Label( janela_logada_conteodo, text="Descrição", fg="white", bg="black", font=('Helvetica', 15))
     lbl_descrição.place(x=30, y=250)
 
     
@@ -559,21 +568,26 @@ def ver_conteodo():
     text_descrição = Text( janela_logada_conteodo, width=25, height=5 , font=('Helvetica', 15), state="disable") #, textvariable=descriçao_txt)
     text_descrição.place(x=30, y=300)
 
-    avaliação = Entry( janela_logada_conteodo , width=5, )
+    avaliação = Spinbox( janela_logada_conteodo , width=5,from_=1, to=10 )
     avaliação.place(x=500, y=300)
 
+    # valor = InitVar()
+    # valor.set(1)
+    # spin = Spinbox(janela_logada_conteodo, width=5, from_=1, to=10)
+    # spin.place(x=500, y=300)
 
-    btn_enviar = Button( janela_logada_conteodo, text="enviar")# , command="validar_text(avaliação)")
+
+    btn_enviar = Button( janela_logada_conteodo, text="Enviar")# , command="validar_text(avaliação)")
     btn_enviar.place(x=550, y=300)
 
-    btn_adicionar_fav = Button( janela_logada_conteodo, text="adicionar aos favoritos" , command= adicionar_favoritos(titulo_ver_mais))
+    btn_adicionar_fav = Button( janela_logada_conteodo, text="Adicionar aos favoritos" , command= adicionar_favoritos(titulo_ver_mais))
     btn_adicionar_fav.place(x=500, y=350)
 
 def adicionar_favoritos(titulo_ver_mais):
-    nome_user = userName.get()
+    #nome_user = userName.get()
     nome_fav = titulo_ver_mais.get()
     file_fav = open(fichero_fav, "a", encoding="utf-8")
-    linha = nome_user + ";" + nome_fav + "\n"
+    linha = nome_fav + "\n"
     file_fav.write(linha)
     file_fav.close
     #print("esta a entrar na função")
@@ -599,7 +613,7 @@ def gerir_utilizadores():
     y = (screenHeight/2) - (appHeight/2)
     janela_gerir_utilizadores.geometry("{:.0f}x{:.0f}+{:.0f}+{:.0f}" .format(appWidth, appHeight, int(x), int(y)))
 
-    lbl_utilizadores = Label(janela_gerir_utilizadores, text= "utilizadors"  , fg= "white", bg="black",  font=('Helvetica', 25))
+    lbl_utilizadores = Label(janela_gerir_utilizadores, text= "Utilizadores"  , fg= "white", bg="black",  font=('Helvetica', 25))
     lbl_utilizadores.place(x=30,y=30)
 
     global listbox_utilizadores
@@ -611,7 +625,7 @@ def gerir_utilizadores():
     listbox_utilizadores.place(x=30, y= 80)
 
     
-    btn_detalhes =Button(janela_gerir_utilizadores, text="mais detalhes", bg="white" , height=4 , width=15, command=mais_detalhes_utilizadores)
+    btn_detalhes =Button(janela_gerir_utilizadores, text="Mais detalhes", bg="white" , height=4 , width=15, command=mais_detalhes_utilizadores)
     btn_detalhes.place(x=250,y=150)
 
 
@@ -670,22 +684,22 @@ def gerir_categorias():
 
     gestao_categorias()
 
-    btn_adicionar = Button(janela_gestao_categorias, text="adiconar" , width=20 , height=2)
-    btn_adicionar.place(x=200, y=130)
+    # btn_adicionar = Button(janela_gestao_categorias, text="adiconar" , width=20 , height=2)
+    # btn_adicionar.place(x=200, y=130)
 
-    btn_remover = Button(janela_gestao_categorias , text="remover" , width=20 , height=2, command=remover_categoria)
+    btn_remover = Button(janela_gestao_categorias , text="Remover" , width=20 , height=2, command=remover_categoria)
     btn_remover.place(x=200, y=180)
 
-    frame_categorias =  LabelFrame(janela_gestao_categorias, text="categoria" ,width=350, height=250, relief="sunken",fg="white", bg="black")
+    frame_categorias =  LabelFrame(janela_gestao_categorias, text="Categoria" ,width=350, height=250, relief="sunken",fg="white", bg="black")
     frame_categorias.place(x=400,y=90)
 
-    lbl_cat = Label(frame_categorias, text="categoria:", )
+    lbl_cat = Label(frame_categorias, text="Categoria:", )
     lbl_cat.place(x=50,y=50)
 
     txt_cat = Entry(frame_categorias, width=25, text="Nº de vizualizaçoes")
     txt_cat.place(x=150, y=50)
 
-    btn_adicionar_cat = Button(frame_categorias, text="adiconar" , width=15 , height=2, command=lambda:adicionar_categoria(txt_cat))
+    btn_adicionar_cat = Button(frame_categorias, text="Adiconar" , width=15 , height=2, command=lambda:adicionar_categoria(txt_cat))
     btn_adicionar_cat.place(x=150, y=100)
 
 def gerir_catalogo():
@@ -706,7 +720,7 @@ def gerir_catalogo():
     y = (screenHeight/2) - (appHeight/2)
     janela_gerir_catalogo.geometry("{:.0f}x{:.0f}+{:.0f}+{:.0f}" .format(appWidth, appHeight, int(x), int(y)))
 
-    lbl_titulo = Label(janela_gerir_catalogo , text= "titulo"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_titulo = Label(janela_gerir_catalogo , text= "Título:"  , fg= "white", bg="black",  font=('Helvetica', 15))
     lbl_titulo.place(x=30,y=30)
 
     global entry_titulo 
@@ -714,14 +728,14 @@ def gerir_catalogo():
     entry_titulo.place(x=115,y=30)
        
     
-    lbl_tipologia = Label(janela_gerir_catalogo , text= "tipologia"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_tipologia = Label(janela_gerir_catalogo , text= "Tipologia:"  , fg= "white", bg="black",  font=('Helvetica', 15))
     lbl_tipologia.place(x=30,y=80)
 
     entry_tipologia = Entry(janela_gerir_catalogo , width=20 , font=('Helvetica', 15) )
     entry_tipologia.place(x=120,y=80)
        
        
-    lbl_cat = Label(janela_gerir_catalogo , text= "CATEGORIAS"  , fg= "white", bg="black",  font=('Helvetica', 15))
+    lbl_cat = Label(janela_gerir_catalogo , text= "Categoria:"  , fg= "white", bg="black",  font=('Helvetica', 15))
     lbl_cat.place(x=30,y=130)
 
     file = open(ficheiro_categorias, "r" , encoding="utf-8")
@@ -737,18 +751,18 @@ def gerir_catalogo():
 
     img_canvas = Canvas(janela_gerir_catalogo, width=300, height=210 , bg="white", relief="sunken")    
     img_canvas.pack(expand= YES, fill= BOTH)
-    img_canvas.place(x=400,y=30)
+    img_canvas.place(x=420,y=30)
 
-    btn_img = Button(janela_gerir_catalogo, text="escolher uma imagem" , bg="white" , fg="black" , command=lambda: open_folder_img(janela_gerir_catalogo, img_canvas))
-    btn_img.place(x=470,y=260)
+    btn_img = Button(janela_gerir_catalogo, text="Escolher uma imagem" , bg="white" , fg="black" , command=lambda: open_folder_img(janela_gerir_catalogo, img_canvas))
+    btn_img.place(x=490,y=260)
 
-    lbl_descrição = Label(janela_gerir_catalogo, text="descrição", fg="white", bg="black", font=('Helvetica', 15))
+    lbl_descrição = Label(janela_gerir_catalogo, text="Descrição:", fg="white", bg="black", font=('Helvetica', 15))
     lbl_descrição.place(x=30, y=250)
     global text_descrição 
     text_descrição = Text(janela_gerir_catalogo, width=25, height=5)
     text_descrição.place(x=30, y=300)
 
-    btn_adicionar = Button(janela_gerir_catalogo, text="adicionar",
+    btn_adicionar = Button(janela_gerir_catalogo, text="Adicionar",
      command=lambda: adicionar_filme_serie(txt_categorias , entry_titulo , entry_tipologia ,text_descrição ))
     btn_adicionar.place(x=400,y=320)
 
@@ -795,6 +809,7 @@ def open_folder_img(janela_gerir_catalogo,img_canvas):
     img_filme = ImageTk.PhotoImage(Image.open(janela_gerir_catalogo.folder))
     img_canvas.create_image(1,1, image = img_filme , anchor="nw" )
     img_label = Label(image = img_filme).pack()
+    
    
 #favoritos
 def favoritos():
@@ -817,7 +832,7 @@ def favoritos():
     y = (screenHeight/2) - (appHeight/2)
     janela_logada_fav.geometry("{:.0f}x{:.0f}+{:.0f}+{:.0f}" .format(appWidth, appHeight, int(x), int(y)))
 
-    lbl_fav = Label(janela_logada_fav , text= "favoritos"  , fg= "white", bg="black",  font=('Helvetica', 25))
+    lbl_fav = Label(janela_logada_fav , text= "Favoritos"  , fg= "white", bg="black",  font=('Helvetica', 25))
     lbl_fav.place(x=30,y=30)
 
     #file_fav = open(fichero_fav, "r" , encoding="utf-8")  
@@ -827,13 +842,12 @@ def favoritos():
     #       line.spli(";")
     #     if     
 
-    list_fav = Listbox(janela_logada_fav, width=25, height=20 , bg="white", relief="sunken",  font=('Helvetica', 15))
-    #for favorito in lista_fav:
-    #    lista_fav.insert(END,favorito)
+    list_fav = Listbox(janela_logada_fav, width=15, height=12 , bg="white", relief="sunken",  font=('Helvetica', 15))
     list_fav.place(x=30, y= 80)
+    listar_favoritos()
 
-    btn_remover = Button(janela_logada_fav , text="remover", width=10, height=2, font=("Helvetica",10))
-    btn_remover.place(x=380 , y=150)
+    btn_remover = Button(janela_logada_fav , text="Remover", width=10, height=2, font=("Helvetica",10), command=remover_favoritos)
+    btn_remover.place(x=220 , y=180)
 
 def login():
     janela_inicial.withdraw()  # fecha a janela do menu
@@ -971,7 +985,7 @@ def mais_detalhes_utilizadores():
     tipo_user.place(x=200, y=130)
 
     btn_remover_user = Button(frame_utilizador, text="Remover utilizador",width=15, height=2, bg="black", relief="groove",fg="white", font=("Helvetica",10),command=remover_utilizador)
-    btn_remover_user.place(x=180, y=230)
+    btn_remover_user.place(x=150, y=230)
 
 def remover_utilizador():
     id_user = listbox_utilizadores.curselection()[0] + 1
@@ -990,7 +1004,7 @@ def remover_utilizador():
     f.write(nova_lista)
     f.close()
 
-    # adicionar a lista de emails proibidos
+    # adicionar a lista de emails removidos
     email = utilizador.split(";")[1] + "\n"
     f = open(ficheiro_utilizadores_removidos, "w")
     f.write(email)
@@ -998,6 +1012,23 @@ def remover_utilizador():
 
     janela_gerir_utilizadores.withdraw()
     janela_gerir_utilizadores.after(100, gerir_utilizadores)
+
+def remover_favoritos():
+    id_user = list_fav.curselection()[0] + 1
+    f = open(fichero_fav, "r", encoding="utf-8")
+    lista_favoritos = f.readlines()
+    f.close()
+
+    utilizador = lista_favoritos[id_user]
+    nova_lista = ""
+
+    for user in lista_favoritos:
+        if user != utilizador:
+            nova_lista += user
+
+    f = open(fichero_fav, "w", encoding="utf-8")
+    f.write(nova_lista)
+    f.close()
     
 
 
