@@ -4,3 +4,4 @@ Thriller
 Animacao
 Ação
 Terror
+Romance
