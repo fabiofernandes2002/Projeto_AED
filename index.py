@@ -770,6 +770,10 @@ def adicionar_filme_serie(txt_categorias, entry_tipologia, entry_titulo  ,text_d
     file.close()
     file_cat.close()
 
+    #if file.write(linha) :
+    #    messagebox.showinfo(title="adicionado" , message="filme/serie adicionada com sucesso")
+
+
 #guardar num ficheiro a parte o titulo juntamente com a descrição
 def descrição_serie_filme(text_descrição,entry_titulo):
     file = open(ficheiro_descrição , "a" , encoding="utf-8")
@@ -779,6 +783,9 @@ def descrição_serie_filme(text_descrição,entry_titulo):
 
     file.write(linha)
     file.close()
+
+    #if file.write(linha) :
+    #    messagebox.showinfo(title="adicionado" , message="descrição adicionada com sucesso")
 
 #abrir uma imagem e adicionar ao canvas 
 def open_folder_img(janela_gerir_catalogo,img_canvas):
