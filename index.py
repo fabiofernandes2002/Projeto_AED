@@ -295,7 +295,7 @@ def pagina_user():
     btn_ver = Button(janela_user,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=ler_filmes_series) 
     btn_ver.place(x=300, y=200)
 
-    btn_favoritos = Button(janela_user,activebackground="grey", bd=0, anchor="w" , bg="white", text="Meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos() ) 
+    btn_favoritos = Button(janela_user,activebackground="grey", bd=0, anchor="w" , bg="white", text="Meus favoritos" , fg="black", font=('Helvetica', 20), command=favoritos) 
     btn_favoritos.place(x=450,y=30)
 
     # panel_filmes_series = PanedWindow(janela_user, width=350, height=250 , bg="white", relief="sunken")
