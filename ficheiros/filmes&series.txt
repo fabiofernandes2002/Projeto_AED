@@ -21,3 +21,5 @@ Os 7 de Chicago;Filme;15;Drama
 O Gangue dos Tubarões;Série;25;Animacao
 Bora Lá;Série;25;Comedia
 Cidade alerta;Filme;57;Drama
+Narcos;série;0;Drama
+Flash;série;0;Drama
