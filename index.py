@@ -6,7 +6,7 @@ from tkinter import ttk
 
 from PIL import ImageTk, Image
 #from tkVideoPlayer import TkinterVideo
- # importa users.py, ficheiro onde estão definidas algumas funções
+# importa users.py, ficheiro onde estão definidas algumas funções
 from users import *
 
 ficheiro_categorias = "./ficheiros/categorias.txt"
@@ -416,7 +416,7 @@ def pagina_inicial_admin():
     btn_ver = Button(janela_logada_admin,activebackground="blue", bd=0, anchor="w" , bg="white", text="Visualizar" , fg="black", font=('Helvetica', 10 ), command=lambda: ler_filmes_series2()) 
     btn_ver.place(x=300, y=200)
 
-    btn_favoritos = Button(janela_logada_admin,activebackground="grey", bd=0, anchor="w" , bg="white", text="meus favoritos" , fg="black", font=('Helvetica', 20)) 
+    btn_favoritos = Button(janela_logada_admin,activebackground="grey", bd=0, anchor="w" , bg="white", text="Meus favoritos" , fg="black", font=('Helvetica', 20)) 
     btn_favoritos.place(x=450,y=30)
 
     # panel_filmes_series = PanedWindow(janela_user, width=350, height=250 , bg="white", relief="sunken")
@@ -556,6 +556,9 @@ def ver_conteodo():
     lbl_descrição = Label( janela_logada_conteodo, text="Descrição", fg="white", bg="black", font=('Helvetica', 15))
     lbl_descrição.place(x=30, y=250)
 
+    lbl_descrição = Label( janela_logada_conteodo, text="De 0 a 10 quanto avalias este Filme&Série", fg="white", bg="black", font=('Helvetica', 15))
+    lbl_descrição.place(x=400, y=250)
+
     
     #descriçao_txt = StringVar                                            abrir ficheiro da descrição 
     #file_descriçao = open(ficheiro_descrição , "r" , encoding="utf-8")   tentar procurar o titulo selecionado da treeview 
@@ -567,6 +570,9 @@ def ver_conteodo():
 
     text_descrição = Text( janela_logada_conteodo, width=25, height=5 , font=('Helvetica', 15), state="disable") #, textvariable=descriçao_txt)
     text_descrição.place(x=30, y=300)
+
+    #lbl_avaliacao = Label(janela_logada_conteodo, text="De 0 a 10 quanto avaliavas este Filme&Série", font=('Helvetica', 10))
+    #lbl_avaliacao.place(500, 50)
 
     avaliação = Spinbox( janela_logada_conteodo , width=5,from_=1, to=10 )
     avaliação.place(x=500, y=300)
@@ -780,8 +786,15 @@ def adicionar_filme_serie(txt_categorias, entry_tipologia, entry_titulo  ,text_d
     tipologia = entry_tipologia.get()
 
 
-    linha = titulo + ";" + tipologia + ";" + ";" + categorias
-    file.write(linha)
+    linha = tipologia + ";" + titulo + ";" + "0" + ";" + categorias
+    try:
+
+        file.write(linha) == True
+        messagebox.showinfo(title="SUCESSO", message="Contéudo adicionado")
+    except ValueError:
+        pass
+
+
     file.close()
     file_cat.close()
 
