@@ -1,10 +1,10 @@
-### Gestor de Filmes e Séries
+# Gestor de Filmes e Séries
 
-# Descrição do Projeto:
+### Descrição do Projeto:
 
 O "Gestor de Filmes e Séries" é uma aplicação desenvolvida em Python, projetada para ser uma solução completa e intuitiva para amantes de filmes e séries. Esta aplicação permite aos utilizadores explorar, organizar e personalizar a sua experiência de entretenimento através de uma variedade de funcionalidades.
 
-# Funcionalidades Principais:
+### Funcionalidades Principais:
 
 Várias Categorias: A aplicação inclui uma vasta gama de categorias de filmes e séries, permitindo aos utilizadores navegar e descobrir conteúdos de acordo com os seus interesses específicos.
 
@@ -18,6 +18,6 @@ Gestão de Utilizadores e Conteúdos: Um administrador tem a capacidade de gerir
 
 Autenticação de Utilizadores: A aplicação dispõe de um sistema de registo e login funcional, proporcionando uma experiência segura e personalizada para cada utilizador.
 
-# Objetivo e Impacto:
+### Objetivo e Impacto:
 
 O objetivo do "Gestor de Filmes e Séries" é oferecer uma plataforma abrangente e fácil de usar para os entusiastas de cinema e televisão. Pretende-se que seja uma ferramenta útil tanto para descoberta de novos conteúdos quanto para a organização de preferências pessoais. Com o seu design intuitivo e as funcionalidades versáteis, esta aplicação é perfeita para qualquer pessoa que procure uma maneira eficiente e agradável de gerir as suas escolhas de entretenimento.
